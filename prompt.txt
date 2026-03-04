@@ -1,0 +1,23 @@
+Create a Chrome browser extension (Manifest V3) as a zip file with all files flat at the root level (no subfolders). The extension should consist of exactly these files: manifest.json, background.js, icon16.png, icon48.png, icon128.png.
+What it does:
+When a user right-clicks a link, add one context menu item per open Chrome window to the link context menu, allowing the link to be opened as a new tab in that specific window. Clicking a menu item opens the link in the target window and focuses that window.
+Rules:
+
+Only show the menu items if there are 2 or more qualifying windows open. Show nothing if only 1 window is open.
+Only show the menu items when right-clicking a link (use contexts: ["link"]).
+Exclude non-normal windows: filter to type === "normal" only, which excludes PWAs ("app"), "devtools", "popup", etc.
+Each menu item label should read: Open link in "[title]" window where [title] is the first 14 characters of the active tab's title in that window, followed by … if the title exceeds 14 characters. Fall back to Window [id] if no title is available.
+
+Menu rebuilding:
+Since contextMenus.onShown is not available in MV3 service workers, keep the menu up to date by calling chrome.contextMenus.removeAll() then recreating all items in response to: chrome.windows.onCreated, chrome.windows.onRemoved, chrome.tabs.onActivated, and chrome.tabs.onUpdated (only when changeInfo.title is set). Also call rebuild once at service worker startup.
+Manifest requirements:
+
+manifest_version: 3
+Permissions: contextMenus, tabs
+Background: service worker pointing to background.js
+Include icon entries for sizes 16, 48, 128
+
+Icons:
+Generate simple valid PNG files programmatically (e.g. using Python's Pillow library) at sizes 16×16, 48×48, and 128×128. Any simple design is fine.
+Packaging:
+Delete any previously existing zip before creating a new one. Use zip -j to ensure all files are added flat with no directory entries or subfolders inside the zip.

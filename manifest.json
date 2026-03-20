@@ -3,9 +3,12 @@
   "name": "Open Link in Window",
   "version": "1.0.0",
   "description": "Right-click any link to open it in a specific Chrome window.",
+  "options_page": "options.html",
   "permissions": [
-    "contextMenus",
-    "tabs"
+	"contextMenus",
+	"tabs",
+	"windows",
+	"storage"
   ],
   "background": {
     "service_worker": "background.js"
